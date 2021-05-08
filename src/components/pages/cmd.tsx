@@ -10,7 +10,7 @@ import {useFormik} from 'formik';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-import {themeStyles} from '../../styles';
+import {theme, themeStyles} from '../../styles';
 
 import {
   ApplicationState,
@@ -28,10 +28,19 @@ import {
 const cmdSchema = Yup.object().shape({
   cmd: Yup.string()
       .required(GeneralError.required),
+  iterate: Yup.boolean(),
   interval: Yup.number()
-      .min(CmdConfig.minInterval, CmdConfig.minIntervalError),
+      .when('iterate', {
+        is: true,
+        then: Yup.number()
+            .min(CmdConfig.minInterval, CmdConfig.minIntervalError),
+      }),
   iterations: Yup.number()
-      .positive(CmdConfig.minIterationError),
+      .when('iterate', {
+        is: true,
+        then: Yup.number()
+            .positive(CmdConfig.minIterationError),
+      }),
 });
 
 interface StateProps {
@@ -45,29 +54,48 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps
 
 const display = (props: Props) => {
+  const [cmd, setCmd] = useState('');
   const [iterateChecked, setIterateChecked] = useState(false);
+  const [interval, setInterval] = useState(0);
   const [numIterations, setNumIterations] = useState(0);
   const classes = themeStyles();
 
   const formik = useFormik({
     initialValues: {
-      cmd: '',
-      interval: 500,
-      iterations: null,
+      cmd: cmd,
+      iterate: iterateChecked,
+      interval: interval,
+      iterations: numIterations,
     },
     enableReinitialize: true,
     validationSchema: cmdSchema,
     onSubmit: (values: any) => {
+      console.log('values!', values);
       props.command(values.cmd);
     },
   });
 
-  const handleIterateChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    setIterateChecked(event.target.checked);
+  const handleCmd = (event: ChangeEvent<HTMLInputElement>) => {
+    setCmd(event.target.value);
   };
 
+  const handleIterateChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    setIterateChecked(event.target.checked);
+    if ( !event.target.checked ) {
+      setNumIterations(0);
+      setInterval(0);
+    }
+  };
+
+  const handleInterval = (event: ChangeEvent<HTMLInputElement>) => {
+    const thisValue = +event.target.value || 0;
+    setInterval(thisValue);
+  };
+
+
   const handleNumIterations = (event: ChangeEvent<HTMLInputElement>) => {
-    const thisValue = event.target.valueAsNumber || 0;
+    const thisValue = +event.target.value || 0;
+    // console.log('numiterations', thisValue, numIterations);
     setNumIterations(thisValue);
   };
 
@@ -114,18 +142,32 @@ const display = (props: Props) => {
                 name="cmd"
                 type="text"
                 value={formik.values.cmd}
-                onChange={formik.handleChange}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  handleCmd(event);
+                  formik.handleChange(event);
+                }}
                 InputProps={{disableUnderline: true}}
               />
             </Grid>
-            <Grid item container className={classes.formError} xs={12}>
-              {formik.errors.cmd && formik.touched.cmd ? (
-                <div>{formik.errors.cmd}</div>
-              ) : null}
-            </Grid>
-
+            {formik.errors.cmd && formik.touched.cmd ? (
+              <Grid
+                item
+                container
+                className={classes.formError}
+                xs={12}
+              >
+                <Grid item container xs={2}>
+                  <Typography variant="h2">
+                    &nbsp;
+                  </Typography>
+                </Grid>
+                <Grid item container xs={10}>
+                  {formik.errors.cmd}
+                </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
-
           <Grid item container xs={12}>
             <Grid
               item
@@ -143,7 +185,10 @@ const display = (props: Props) => {
                 color="primary"
                 name="iterate"
                 checked={iterateChecked}
-                onChange={handleIterateChanged}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  handleIterateChanged(event);
+                  formik.handleChange(event);
+                }}
                 inputProps={{'aria-label': 'primary checkbox'}}
               />
             </Grid>
@@ -168,18 +213,33 @@ const display = (props: Props) => {
                 disabled={!iterateChecked}
                 size="small"
                 name="interval"
-                type="number"
+                type="text"
                 value={formik.values.interval}
-                onChange={formik.handleChange}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  handleInterval(event);
+                  formik.handleChange(event);
+                }}
                 InputProps={{disableUnderline: true}}
               />
             </Grid>
-            <Grid item container className={classes.formError} xs={12}>
-              {formik.errors.interval && formik.touched.interval ? (
-                <div>{formik.errors.interval}</div>
-              ) : null}
-            </Grid>
-
+            {formik.errors.interval && formik.touched.interval ? (
+              <Grid
+                item
+                container
+                className={classes.formError}
+                xs={12}
+              >
+                <Grid item container xs={2}>
+                  <Typography variant="h2">
+                    &nbsp;
+                  </Typography>
+                </Grid>
+                <Grid item container xs={10}>
+                  {formik.errors.interval}
+                </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
 
           <Grid item container xs={12}>
@@ -200,22 +260,33 @@ const display = (props: Props) => {
                 disabled={!iterateChecked}
                 size="small"
                 name="iterations"
-                type="number"
+                type="text"
                 value={formik.values.iterations}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  console.log('here!');
                   handleNumIterations(event);
-                  formik.handleChange;
+                  formik.handleChange(event);
                 }}
                 InputProps={{disableUnderline: true}}
               />
             </Grid>
-            <Grid item container className={classes.formError} xs={12}>
-              {formik.errors.iterations && formik.touched.iterations ? (
-                <div>{formik.errors.iterations}</div>
-              ) : null}
-            </Grid>
-
+            {formik.errors.iterations && formik.touched.iterations ? (
+              <Grid
+                item
+                container
+                className={classes.formError}
+                xs={12}
+              >
+                <Grid item container xs={2}>
+                  <Typography variant="h2">
+                    &nbsp;
+                  </Typography>
+                </Grid>
+                <Grid item container xs={10}>
+                  {formik.errors.iterations}
+                </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
 
           <Grid item container xs={12}>
@@ -239,7 +310,11 @@ const display = (props: Props) => {
 
             <Grid className={classes.formButton} item container xs={2}>
               <Button
-                disabled={numIterations > 0 ? false : true}
+                disabled={
+                  iterateChecked &&
+                  interval >= CmdConfig.minInterval &&
+                  numIterations > 0 ? false : true
+                }
                 type='submit'
                 color="primary"
                 size='medium'
