@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 
 import {theme, themeStyles} from '../../styles';
 
@@ -35,8 +36,9 @@ const cmdSchema = Yup.object().shape({
         then: Yup.number()
             .min(CmdConfig.minInterval, CmdConfig.minIntervalError),
       }),
+  forever: Yup.boolean(),
   iterations: Yup.number()
-      .when('iterate', {
+      .when('forever', {
         is: true,
         then: Yup.number()
             .positive(CmdConfig.minIterationError),
@@ -56,6 +58,7 @@ type Props = StateProps & DispatchProps
 const display = (props: Props) => {
   const [cmd, setCmd] = useState('');
   const [iterateChecked, setIterateChecked] = useState(false);
+  const [foreverChecked, setForeverChecked] = useState(false);
   const [interval, setInterval] = useState(0);
   const [numIterations, setNumIterations] = useState(0);
   const classes = themeStyles();
@@ -65,6 +68,7 @@ const display = (props: Props) => {
       cmd: cmd,
       iterate: iterateChecked,
       interval: interval,
+      forever: foreverChecked,
       iterations: numIterations,
     },
     enableReinitialize: true,
@@ -82,8 +86,18 @@ const display = (props: Props) => {
   const handleIterateChanged = (event: ChangeEvent<HTMLInputElement>) => {
     setIterateChecked(event.target.checked);
     if ( !event.target.checked ) {
-      setNumIterations(0);
       setInterval(0);
+    } else {
+      setInterval(CmdConfig.minInterval);
+    }
+  };
+
+  const handleForeverChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    setForeverChecked(event.target.checked);
+    if ( !event.target.checked ) {
+      setNumIterations(1);
+    } else {
+      setNumIterations(0);
     }
   };
 
@@ -97,6 +111,10 @@ const display = (props: Props) => {
     const thisValue = +event.target.value || 0;
     // console.log('numiterations', thisValue, numIterations);
     setNumIterations(thisValue);
+  };
+
+  const handleStop = () => {
+    // do stuff
   };
 
   return (
@@ -208,18 +226,17 @@ const display = (props: Props) => {
               <label htmlFor="interval">{CmdConfig.interval}</label>
             </Grid>
             <Grid item container xs={10}>
-              <TextField
+              <Input
                 fullWidth
+                disableUnderline={true}
                 disabled={!iterateChecked}
-                size="small"
                 name="interval"
-                type="text"
+                type="number"
                 value={formik.values.interval}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   handleInterval(event);
                   formik.handleChange(event);
                 }}
-                InputProps={{disableUnderline: true}}
               />
             </Grid>
             {formik.errors.interval && formik.touched.interval ? (
@@ -243,6 +260,34 @@ const display = (props: Props) => {
           </Grid>
 
           <Grid item container xs={12}>
+            <Grid
+              item
+              container
+              className={classes.formLabel}
+              justify="flex-start"
+              alignItems="center"
+              xs={2}
+            >
+              <label htmlFor="forever">{CmdConfig.forever}</label>
+            </Grid>
+            <Grid item container xs={10}>
+              <Switch
+                disabled={!iterateChecked}
+                size='medium'
+                color="primary"
+                name="forever"
+                checked={foreverChecked}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  handleForeverChanged(event);
+                  formik.handleChange(event);
+                }}
+                inputProps={{'aria-label': 'primary checkbox'}}
+              />
+            </Grid>
+
+          </Grid>
+
+          <Grid item container xs={12}>
 
             <Grid
               item
@@ -255,18 +300,17 @@ const display = (props: Props) => {
               <label htmlFor="iterations">{CmdConfig.iterations}</label>
             </Grid>
             <Grid item container xs={10}>
-              <TextField
+              <Input
                 fullWidth
-                disabled={!iterateChecked}
-                size="small"
+                disableUnderline={true}
+                disabled={!foreverChecked}
                 name="iterations"
-                type="text"
+                type="number"
                 value={formik.values.iterations}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   handleNumIterations(event);
                   formik.handleChange(event);
                 }}
-                InputProps={{disableUnderline: true}}
               />
             </Grid>
             {formik.errors.iterations && formik.touched.iterations ? (
@@ -310,15 +354,14 @@ const display = (props: Props) => {
 
             <Grid className={classes.formButton} item container xs={2}>
               <Button
-                disabled={
-                  iterateChecked &&
-                  interval >= CmdConfig.minInterval &&
-                  numIterations > 0 ? false : true
-                }
-                type='submit'
+                disabled={!foreverChecked}
+                onChange={handleStop}
                 color="primary"
                 size='medium'
                 variant="contained"
+                style={{
+                  marginLeft: theme.spacing(2),
+                }}
               >
                 {CmdConfig.stopButton}
               </Button>

@@ -82,7 +82,8 @@ class Cmd {
   static readonly cmd = 'Command'
   static readonly cmdButton = 'Run Command'
   static readonly iterate = 'Iterate?'
-  static readonly interval = 'Interval'
+  static readonly forever = 'Forever?'
+  static readonly interval = 'Interval (ms)'
   static readonly iterations = 'Iterate Amount'
 
   static readonly minInterval = 500
