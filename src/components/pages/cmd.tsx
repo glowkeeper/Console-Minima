@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState, ChangeEvent} from 'react';
 import {connect} from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Switch from '@material-ui/core/Switch';
 
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
@@ -26,7 +27,11 @@ import {
 
 const cmdSchema = Yup.object().shape({
   cmd: Yup.string()
-      .required(`${GeneralError.required}`),
+      .required(GeneralError.required),
+  interval: Yup.number()
+      .min(CmdConfig.minInterval, CmdConfig.minIntervalError),
+  iterations: Yup.number()
+      .positive(CmdConfig.minIterationError),
 });
 
 interface StateProps {
@@ -40,10 +45,15 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps
 
 const display = (props: Props) => {
+  const [iterateChecked, setIterateChecked] = useState(false);
+  const [numIterations, setNumIterations] = useState(0);
   const classes = themeStyles();
+
   const formik = useFormik({
     initialValues: {
       cmd: '',
+      interval: 500,
+      iterations: null,
     },
     enableReinitialize: true,
     validationSchema: cmdSchema,
@@ -51,6 +61,15 @@ const display = (props: Props) => {
       props.command(values.cmd);
     },
   });
+
+  const handleIterateChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    setIterateChecked(event.target.checked);
+  };
+
+  const handleNumIterations = (event: ChangeEvent<HTMLInputElement>) => {
+    const thisValue = event.target.valueAsNumber || 0;
+    setNumIterations(thisValue);
+  };
 
   return (
     <Grid className={classes.loggedInContent} item container xs={12}>
@@ -86,7 +105,7 @@ const display = (props: Props) => {
               alignItems="center"
               xs={2}
             >
-              <label htmlFor="amount">{CmdConfig.cmd}</label>
+              <label htmlFor="cmd">{CmdConfig.cmd}</label>
             </Grid>
             <Grid item container xs={10}>
               <TextField
@@ -108,6 +127,98 @@ const display = (props: Props) => {
           </Grid>
 
           <Grid item container xs={12}>
+            <Grid
+              item
+              container
+              className={classes.formLabel}
+              justify="flex-start"
+              alignItems="center"
+              xs={2}
+            >
+              <label htmlFor="iterate">{CmdConfig.iterate}</label>
+            </Grid>
+            <Grid item container xs={10}>
+              <Switch
+                size='medium'
+                color="primary"
+                name="iterate"
+                checked={iterateChecked}
+                onChange={handleIterateChanged}
+                inputProps={{'aria-label': 'primary checkbox'}}
+              />
+            </Grid>
+
+          </Grid>
+
+          <Grid item container xs={12}>
+
+            <Grid
+              item
+              container
+              className={classes.formLabel}
+              justify="flex-start"
+              alignItems="center"
+              xs={2}
+            >
+              <label htmlFor="interval">{CmdConfig.interval}</label>
+            </Grid>
+            <Grid item container xs={10}>
+              <TextField
+                fullWidth
+                disabled={!iterateChecked}
+                size="small"
+                name="interval"
+                type="number"
+                value={formik.values.interval}
+                onChange={formik.handleChange}
+                InputProps={{disableUnderline: true}}
+              />
+            </Grid>
+            <Grid item container className={classes.formError} xs={12}>
+              {formik.errors.interval && formik.touched.interval ? (
+                <div>{formik.errors.interval}</div>
+              ) : null}
+            </Grid>
+
+          </Grid>
+
+          <Grid item container xs={12}>
+
+            <Grid
+              item
+              container
+              className={classes.formLabel}
+              justify="flex-start"
+              alignItems="center"
+              xs={2}
+            >
+              <label htmlFor="iterations">{CmdConfig.iterations}</label>
+            </Grid>
+            <Grid item container xs={10}>
+              <TextField
+                fullWidth
+                disabled={!iterateChecked}
+                size="small"
+                name="iterations"
+                type="number"
+                value={formik.values.iterations}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  console.log('here!');
+                  handleNumIterations(event);
+                  formik.handleChange;
+                }}
+                InputProps={{disableUnderline: true}}
+              />
+            </Grid>
+            <Grid item container className={classes.formError} xs={12}>
+              {formik.errors.iterations && formik.touched.iterations ? (
+                <div>{formik.errors.iterations}</div>
+              ) : null}
+            </Grid>
+
+          </Grid>
+
+          <Grid item container xs={12}>
 
             <Grid item container xs={2}>
               <Typography variant="h2">
@@ -123,6 +234,18 @@ const display = (props: Props) => {
                 variant="contained"
               >
                 {CmdConfig.cmdButton}
+              </Button>
+            </Grid>
+
+            <Grid className={classes.formButton} item container xs={2}>
+              <Button
+                disabled={numIterations > 0 ? false : true}
+                type='submit'
+                color="primary"
+                size='medium'
+                variant="contained"
+              >
+                {CmdConfig.stopButton}
               </Button>
             </Grid>
 

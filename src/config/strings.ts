@@ -81,6 +81,15 @@ class Cmd {
 
   static readonly cmd = 'Command'
   static readonly cmdButton = 'Run Command'
+  static readonly iterate = 'Iterate?'
+  static readonly interval = 'Interval'
+  static readonly iterations = 'Iterate Amount'
+
+  static readonly minInterval = 500
+  static readonly minIntervalError =
+    `The minimum interval is ${Cmd.minInterval}`
+  static readonly minIterationError = 'Value must be greater than zero'
+  static readonly stopButton = 'Stop'
 }
 
 /** @class Post */
