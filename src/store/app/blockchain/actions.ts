@@ -8,7 +8,6 @@ import {
   TxActionTypes,
   TxData,
   CmdArgs,
-  CmdGuard,
 } from '../../types';
 
 import {
@@ -98,14 +97,13 @@ export const command = (cmd: string) => {
 export const commandIterate = (cmd: CmdArgs) => {
   return async (dispatch: AppDispatch, getState: Function) => {
     if ( cmd.forever ) {
-      // do something
       let state = getState();
       let stop = false;
       while (!stop) {
-        state = getState();
         const thisPost = await doPost(Remote.cmdURL, cmd.cmd);
         dispatch(write({data: thisPost})(CmdActionTypes.CMD_SUCCESS));
         await sleep(cmd.interval);
+        state = getState();
         stop = state.cmdGuardData.data[0].stop;
       }
     } else {
@@ -157,6 +155,7 @@ export const getLogs = () => {
   };
 };
 
+/*
 const get = (url: string, actionType: string) => {
   return async (dispatch: AppDispatch) => {
     try {
@@ -239,3 +238,4 @@ const post = (url: string, data: object) => {
         });
   };
 };
+*/

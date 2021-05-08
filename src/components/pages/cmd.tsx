@@ -43,10 +43,14 @@ const cmdSchema = Yup.object().shape({
       }),
   forever: Yup.boolean(),
   iterations: Yup.number()
-      .when('forever', {
+      .when('iterate', {
         is: true,
         then: Yup.number()
-            .positive(CmdConfig.minIterationError),
+            .when('forever', {
+              is: false,
+              then: Yup.number()
+                  .positive(CmdConfig.minIterationError),
+            }),
       }),
 });
 
@@ -83,6 +87,7 @@ const display = (props: Props) => {
     onSubmit: (values: any) => {
       if ( iterateChecked ) {
         // console.log('values!', values);
+        props.setStop(false);
         const cmdArgs: CmdArgs = {
           cmd: cmd,
           interval: interval,
@@ -104,8 +109,11 @@ const display = (props: Props) => {
     setIterateChecked(event.target.checked);
     if ( !event.target.checked ) {
       setInterval(0);
+      setNumIterations(0);
+      setForeverChecked(false);
     } else {
       setInterval(CmdConfig.minInterval);
+      setNumIterations(1);
     }
   };
 
@@ -320,7 +328,10 @@ const display = (props: Props) => {
               <Input
                 fullWidth
                 disableUnderline={true}
-                disabled={!iterateChecked && foreverChecked}
+                disabled={iterateChecked ?
+                  (foreverChecked ? true : false) :
+                  true
+                }
                 name="iterations"
                 type="number"
                 value={formik.values.iterations}
@@ -371,7 +382,10 @@ const display = (props: Props) => {
 
             <Grid className={classes.formButton} item container xs={2}>
               <Button
-                disabled={!foreverChecked}
+                disabled={iterateChecked ?
+                  (foreverChecked ? false : true) :
+                  true
+                }
                 onClick={handleStop}
                 color="primary"
                 size='medium'
