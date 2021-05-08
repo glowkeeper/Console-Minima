@@ -11,12 +11,14 @@ import {ApplicationState, ActionProps} from './types';
 
 import {reducer as logsReducer} from './app/reducers/logs/reducer';
 import {reducer as cmdReducer} from './app/reducers/cmd/reducer';
+import {reducer as cmdGuardReducer} from './app/reducers/cmdGuard/reducer';
 import {reducer as txReducer} from './app/reducers/tx/reducer';
 
 export const rootReducer: Reducer<ApplicationState, ActionProps> =
 combineReducers<ApplicationState, ActionProps>({
   logsData: logsReducer,
   cmdData: cmdReducer,
+  cmdGuardData: cmdGuardReducer,
   tx: txReducer,
 });
 

@@ -7,6 +7,7 @@ import {ThunkDispatch} from 'redux-thunk';
 export interface ApplicationState {
   logsData: LogsProps
   cmdData: CmdProps,
+  cmdGuardData: CmdGuardProps,
   tx: TxProps
 }
 
@@ -47,6 +48,14 @@ export interface CmdArgs {
   interval: number
   forever: boolean
   iterations: number
+}
+
+export interface CmdGuard {
+  stop: boolean
+}
+
+export interface CmdGuardProps {
+  data: Array<CmdGuard>
 }
 
 /**
@@ -100,7 +109,8 @@ export const enum TxActionTypes {
 
 export const enum CmdActionTypes {
   CMD_SUCCESS = '@@CmdActionTypes/CMD_SUCCESS',
-  CMD_FAILURE = '@@CmdActionTypes/CMD_FAILURE'
+  CMD_FAILURE = '@@CmdActionTypes/CMD_FAILURE',
+  CMD_STOP = '@@CmdActionTypes/CMD_STOP'
 }
 
 export const enum LogsActionTypes {

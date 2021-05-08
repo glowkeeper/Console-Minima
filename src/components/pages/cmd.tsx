@@ -20,7 +20,11 @@ import {
   CmdArgs,
 } from '../../store/types';
 
-import {command, commandIterate} from '../../store/app/blockchain/actions';
+import {
+  command,
+  commandIterate,
+  setStop,
+} from '../../store/app/blockchain/actions';
 
 import {
   GeneralError,
@@ -53,6 +57,7 @@ interface StateProps {
 interface DispatchProps {
   command: (cmd: string) => void
   commandIterate: (cmd: CmdArgs) => void
+  setStop:(stop: boolean) => void
 }
 
 type Props = StateProps & DispatchProps
@@ -126,7 +131,7 @@ const display = (props: Props) => {
   };
 
   const handleStop = () => {
-    // do stuff
+    props.setStop(true);
   };
 
   return (
@@ -367,7 +372,7 @@ const display = (props: Props) => {
             <Grid className={classes.formButton} item container xs={2}>
               <Button
                 disabled={!foreverChecked}
-                onChange={handleStop}
+                onClick={handleStop}
                 color="primary"
                 size='medium'
                 variant="contained"
@@ -425,6 +430,7 @@ const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => {
   return {
     command: (cmd: string) => dispatch(command(cmd)),
     commandIterate: (cmd: CmdArgs) => dispatch(commandIterate(cmd)),
+    setStop: (stop: boolean) => dispatch(setStop(stop)),
   };
 };
 

@@ -8,6 +8,7 @@ import {
   TxActionTypes,
   TxData,
   CmdArgs,
+  CmdGuard,
 } from '../../types';
 
 import {
@@ -95,10 +96,18 @@ export const command = (cmd: string) => {
 };
 
 export const commandIterate = (cmd: CmdArgs) => {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, getState: Function) => {
     if ( cmd.forever ) {
       // do something
-
+      let state = getState();
+      let stop = false;
+      while (!stop) {
+        state = getState();
+        const thisPost = await doPost(Remote.cmdURL, cmd.cmd);
+        dispatch(write({data: thisPost})(CmdActionTypes.CMD_SUCCESS));
+        await sleep(cmd.interval);
+        stop = state.cmdGuardData.data[0].stop;
+      }
     } else {
       for ( let i = 0; i < cmd.iterations; i++ ) {
         const thisPost = await doPost(Remote.cmdURL, cmd.cmd);
@@ -106,6 +115,12 @@ export const commandIterate = (cmd: CmdArgs) => {
         await sleep(cmd.interval);
       }
     }
+  };
+};
+
+export const setStop = (stop: boolean) => {
+  return async (dispatch: AppDispatch) => {
+    dispatch(write({data: [{stop: stop}]})(CmdActionTypes.CMD_STOP));
   };
 };
 
