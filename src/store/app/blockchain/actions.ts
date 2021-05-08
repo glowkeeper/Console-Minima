@@ -7,6 +7,7 @@ import {
   CmdActionTypes,
   TxActionTypes,
   TxData,
+  CmdArgs,
 } from '../../types';
 
 import {
@@ -17,14 +18,30 @@ import {
 
 import {write} from '../../actions';
 
-const txInit: TxData = {
-  code: '',
-  summary: '',
-  time: '',
+const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+const doPost = (url: string, cmd: string): Promise<object> => {
+  return new Promise((resolve, reject) => {
+    Minima.net.POST(Remote.cmdURL, cmd, function(msg: any) {
+      const cmdObject = JSON.parse(msg.result);
+      if ( cmdObject.status ) {
+        resolve(cmdObject.response);
+      } else {
+        resolve({});
+      }
+    });
+  });
 };
 
 export const init = () => {
   return async (dispatch: AppDispatch) => {
+    const txInit: TxData = {
+      code: '',
+      summary: '',
+      time: '',
+    };
     Minima.init( function(msg: any) {
       if (msg.event == 'connected') {
         dispatch(write({data: txInit})(TxActionTypes.TX_INIT));
@@ -35,9 +52,34 @@ export const init = () => {
 
 export const initTx = () => {
   return async (dispatch: AppDispatch) => {
+    const txInit: TxData = {
+      code: '',
+      summary: '',
+      time: '',
+    };
     dispatch(write({data: txInit})(TxActionTypes.TX_INIT));
   };
 };
+
+/*
+try {
+  console.log('trying');
+  const response = await axios({
+    method: 'POST',
+    url: Remote.cmdURL,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: cmd,
+  });
+  console.log('trying', response);
+  dispatch(write({data: response.data})(CmdActionTypes.CMD_SUCCESS));
+} catch (error) {
+  console.log('oops', error);
+  dispatch(write({data: []})(CmdActionTypes.CMD_FAILURE));
+  return {};
+}
+*/
 
 export const command = (cmd: string) => {
   return async (dispatch: AppDispatch) => {
@@ -49,34 +91,23 @@ export const command = (cmd: string) => {
         dispatch(write({data: []})(CmdActionTypes.CMD_FAILURE));
       }
     });
-    /*
-    try {
-      console.log('trying');
-      const response = await axios({
-        method: 'POST',
-        url: Remote.cmdURL,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: cmd,
-      });
-      console.log('trying', response);
-      dispatch(write({data: response.data})(CmdActionTypes.CMD_SUCCESS));
-    } catch (error) {
-      console.log('oops', error);
-      dispatch(write({data: []})(CmdActionTypes.CMD_FAILURE));
-      return {};
-    }
-    */
   };
 };
 
-/*
-const sortLogs = (logsData: LogsProps): Logs[] => {
-  return logsData.data.sort((a: Logs, b: Logs) =>
-    b.DATE.localeCompare(a.DATE));
+export const commandIterate = (cmd: CmdArgs) => {
+  return async (dispatch: AppDispatch) => {
+    if ( cmd.forever ) {
+      // do something
+
+    } else {
+      for ( let i = 0; i < cmd.iterations; i++ ) {
+        const thisPost = await doPost(Remote.cmdURL, cmd.cmd);
+        dispatch(write({data: thisPost})(CmdActionTypes.CMD_SUCCESS));
+        await sleep(cmd.interval);
+      }
+    }
+  };
 };
-*/
 
 export const getLogs = () => {
   return async (dispatch: AppDispatch) => {

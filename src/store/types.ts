@@ -22,14 +22,13 @@ export interface ActionProps extends Action {
 export type AppDispatch = ThunkDispatch<ApplicationState, any, ActionProps>
 
 /**
- * Static info props
+ * Static info props and pagetypes
  */
 export interface InfoProps {
   title: string
   data: string[]
 }
 
-// Stuff pertinent to make this app' work
 export const enum PageTypes {
   ABOUT = 'about',
   HELP = 'help',
@@ -41,6 +40,13 @@ export const enum PageTypes {
 */
 export interface CmdProps extends PayloadProps {
   data: Array<object>
+}
+
+export interface CmdArgs {
+  cmd: string
+  interval: number
+  forever: boolean
+  iterations: number
 }
 
 /**

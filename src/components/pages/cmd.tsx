@@ -17,9 +17,10 @@ import {
   ApplicationState,
   AppDispatch,
   CmdProps,
+  CmdArgs,
 } from '../../store/types';
 
-import {command} from '../../store/app/blockchain/actions';
+import {command, commandIterate} from '../../store/app/blockchain/actions';
 
 import {
   GeneralError,
@@ -51,6 +52,7 @@ interface StateProps {
 
 interface DispatchProps {
   command: (cmd: string) => void
+  commandIterate: (cmd: CmdArgs) => void
 }
 
 type Props = StateProps & DispatchProps
@@ -74,8 +76,18 @@ const display = (props: Props) => {
     enableReinitialize: true,
     validationSchema: cmdSchema,
     onSubmit: (values: any) => {
-      console.log('values!', values);
-      props.command(values.cmd);
+      if ( iterateChecked ) {
+        // console.log('values!', values);
+        const cmdArgs: CmdArgs = {
+          cmd: cmd,
+          interval: interval,
+          forever: foreverChecked,
+          iterations: numIterations,
+        };
+        props.commandIterate(cmdArgs);
+      } else {
+        props.command(cmd);
+      }
     },
   });
 
@@ -83,7 +95,7 @@ const display = (props: Props) => {
     setCmd(event.target.value);
   };
 
-  const handleIterateChanged = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleIterate = (event: ChangeEvent<HTMLInputElement>) => {
     setIterateChecked(event.target.checked);
     if ( !event.target.checked ) {
       setInterval(0);
@@ -92,7 +104,7 @@ const display = (props: Props) => {
     }
   };
 
-  const handleForeverChanged = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleForever = (event: ChangeEvent<HTMLInputElement>) => {
     setForeverChecked(event.target.checked);
     if ( !event.target.checked ) {
       setNumIterations(1);
@@ -204,7 +216,7 @@ const display = (props: Props) => {
                 name="iterate"
                 checked={iterateChecked}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  handleIterateChanged(event);
+                  handleIterate(event);
                   formik.handleChange(event);
                 }}
                 inputProps={{'aria-label': 'primary checkbox'}}
@@ -278,7 +290,7 @@ const display = (props: Props) => {
                 name="forever"
                 checked={foreverChecked}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  handleForeverChanged(event);
+                  handleForever(event);
                   formik.handleChange(event);
                 }}
                 inputProps={{'aria-label': 'primary checkbox'}}
@@ -303,7 +315,7 @@ const display = (props: Props) => {
               <Input
                 fullWidth
                 disableUnderline={true}
-                disabled={!foreverChecked}
+                disabled={!iterateChecked && foreverChecked}
                 name="iterations"
                 type="number"
                 value={formik.values.iterations}
@@ -412,6 +424,7 @@ const mapStateToProps = (state: ApplicationState): StateProps => {
 const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => {
   return {
     command: (cmd: string) => dispatch(command(cmd)),
+    commandIterate: (cmd: CmdArgs) => dispatch(commandIterate(cmd)),
   };
 };
 
