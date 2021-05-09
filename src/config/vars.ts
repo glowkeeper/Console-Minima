@@ -86,7 +86,7 @@ class Cmd {
   static readonly interval = 'Interval (ms)'
   static readonly iterations = 'Iterate Amount'
 
-  static readonly minInterval = 500
+  static readonly minInterval = 1000
   static readonly minIntervalError =
     `The minimum interval is ${Cmd.minInterval}`
   static readonly minIterationError = 'Value must be greater than zero'

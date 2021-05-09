@@ -25,9 +25,13 @@ const sleep = (ms: number) => {
 const doPost = (url: string, cmd: string): Promise<object> => {
   return new Promise((resolve, reject) => {
     Minima.net.POST(Remote.cmdURL, cmd, function(msg: any) {
-      const cmdObject = JSON.parse(msg.result);
-      if ( cmdObject.status ) {
-        resolve(cmdObject.response);
+      if ( msg.hasOwnProperty('result')) {
+        const cmdObject = JSON.parse(msg.result);
+        if ( cmdObject.status ) {
+          resolve(cmdObject.response);
+        } else {
+          resolve({});
+        }
       } else {
         resolve({});
       }
@@ -83,12 +87,18 @@ try {
 
 export const command = (cmd: string) => {
   return async (dispatch: AppDispatch) => {
+    dispatch(write({data: [{stop: false}]})(CmdActionTypes.CMD_STOP));
     Minima.net.POST(Remote.cmdURL, cmd, function(msg: any) {
-      const cmdObject = JSON.parse(msg.result);
-      if ( cmdObject.status ) {
-        dispatch(write({data: cmdObject.response})(CmdActionTypes.CMD_SUCCESS));
-      } else {
-        dispatch(write({data: []})(CmdActionTypes.CMD_FAILURE));
+      dispatch(write({data: [{stop: true}]})(CmdActionTypes.CMD_STOP));
+      if ( msg.hasOwnProperty('result')) {
+        const cmdObject = JSON.parse(msg.result);
+        if ( cmdObject.status ) {
+          dispatch(
+              write({data: cmdObject.response})(CmdActionTypes.CMD_SUCCESS),
+          );
+        } else {
+          dispatch(write({data: []})(CmdActionTypes.CMD_FAILURE));
+        }
       }
     });
   };
@@ -96,6 +106,7 @@ export const command = (cmd: string) => {
 
 export const commandIterate = (cmd: CmdArgs) => {
   return async (dispatch: AppDispatch, getState: Function) => {
+    dispatch(write({data: [{stop: false}]})(CmdActionTypes.CMD_STOP));
     if ( cmd.forever ) {
       let state = getState();
       let stop = false;
@@ -112,6 +123,7 @@ export const commandIterate = (cmd: CmdArgs) => {
         dispatch(write({data: thisPost})(CmdActionTypes.CMD_SUCCESS));
         await sleep(cmd.interval);
       }
+      dispatch(write({data: [{stop: true}]})(CmdActionTypes.CMD_STOP));
     }
   };
 };

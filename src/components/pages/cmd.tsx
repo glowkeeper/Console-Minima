@@ -1,4 +1,4 @@
-import React, {useState, ChangeEvent} from 'react';
+import React, {useState, useEffect, ChangeEvent} from 'react';
 import {connect} from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
@@ -56,6 +56,7 @@ const cmdSchema = Yup.object().shape({
 
 interface StateProps {
   cmd: CmdProps
+  cmdStop: boolean
 }
 
 interface DispatchProps {
@@ -68,11 +69,19 @@ type Props = StateProps & DispatchProps
 
 const display = (props: Props) => {
   const [cmd, setCmd] = useState('');
+  const [isRunning, setIsRunning] = useState(false);
   const [iterateChecked, setIterateChecked] = useState(false);
   const [foreverChecked, setForeverChecked] = useState(false);
   const [interval, setInterval] = useState(0);
   const [numIterations, setNumIterations] = useState(0);
   const classes = themeStyles();
+
+  useEffect(() => {
+    console.log('got stop', Date.now(), isRunning, props.cmdStop);
+    if ( props.cmdStop ) {
+      setIsRunning(false);
+    }
+  }, [props.cmdStop]);
 
   const formik = useFormik({
     initialValues: {
@@ -85,9 +94,9 @@ const display = (props: Props) => {
     enableReinitialize: true,
     validationSchema: cmdSchema,
     onSubmit: (values: any) => {
+      setIsRunning(true);
       if ( iterateChecked ) {
         // console.log('values!', values);
-        props.setStop(false);
         const cmdArgs: CmdArgs = {
           cmd: cmd,
           interval: interval,
@@ -119,6 +128,7 @@ const display = (props: Props) => {
 
   const handleForever = (event: ChangeEvent<HTMLInputElement>) => {
     setForeverChecked(event.target.checked);
+    console.log('forevert', foreverChecked, isRunning);
     if ( !event.target.checked ) {
       setNumIterations(1);
     } else {
@@ -161,7 +171,7 @@ const display = (props: Props) => {
             width="2000"
             height="4"
           >
-            <line x2="2000" stroke="#317AFF" strokeWidth={4} />
+            <line x2="4000" stroke="#317AFF" strokeWidth={4} />
           </svg>
         </Grid>
 
@@ -371,6 +381,7 @@ const display = (props: Props) => {
 
             <Grid className={classes.formButton} item container xs={2}>
               <Button
+                disabled={isRunning}
                 type='submit'
                 color="primary"
                 size='medium'
@@ -382,10 +393,7 @@ const display = (props: Props) => {
 
             <Grid className={classes.formButton} item container xs={2}>
               <Button
-                disabled={iterateChecked ?
-                  (foreverChecked ? false : true) :
-                  true
-                }
+                disabled={!foreverChecked || !isRunning}
                 onClick={handleStop}
                 color="primary"
                 size='medium'
@@ -408,7 +416,7 @@ const display = (props: Props) => {
             width="2000"
             height="4"
           >
-            <line x2="2000" stroke="#317AFF" strokeWidth={4} />
+            <line x2="4000" stroke="#317AFF" strokeWidth={4} />
           </svg>
         </Grid>
 
@@ -437,6 +445,7 @@ const display = (props: Props) => {
 const mapStateToProps = (state: ApplicationState): StateProps => {
   return {
     cmd: state.cmdData as CmdProps,
+    cmdStop: state.cmdGuardData.data[0].stop,
   };
 };
 

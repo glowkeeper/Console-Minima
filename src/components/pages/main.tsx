@@ -9,11 +9,9 @@ import minimaIcon from '../../images/minimaIcon.svg';
 
 import {Content} from '../content';
 
-import {App} from '../../config/strings';
-
 import {themeStyles} from '../../styles';
 
-import {Home} from '../../config';
+import {Home, App} from '../../config';
 import {AppInit} from '../appInit';
 
 export const Main = () => {
