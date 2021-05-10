@@ -77,7 +77,6 @@ const display = (props: Props) => {
   const classes = themeStyles();
 
   useEffect(() => {
-    console.log('got stop', Date.now(), isRunning, props.cmdStop);
     if ( props.cmdStop ) {
       setIsRunning(false);
     }
@@ -150,6 +149,10 @@ const display = (props: Props) => {
 
   const handleStop = () => {
     props.setStop(true);
+  };
+
+  const handleClear = () => {
+    props.command('');
   };
 
   return (
@@ -386,36 +389,63 @@ const display = (props: Props) => {
           <Grid item container xs={12}>
 
             <Grid item container xs={4} lg={2}>
-              <Typography variant="h2">
+              <Typography variant="body1">
                 &nbsp;
               </Typography>
             </Grid>
 
-            <Grid className={classes.formButton} item container xs={2}>
-              <Button
-                disabled={isRunning}
-                type='submit'
-                color="primary"
-                size='medium'
-                variant="contained"
-              >
-                {CmdConfig.cmdButton}
-              </Button>
-            </Grid>
+            <Grid item container xs={8} lg={10} justify='flex-start'>
 
-            <Grid className={classes.formButton} item container xs={2}>
-              <Button
-                disabled={!foreverChecked || !isRunning}
-                onClick={handleStop}
-                color="primary"
-                size='medium'
-                variant="contained"
-                style={{
-                  marginLeft: theme.spacing(2),
-                }}
+              <Grid
+                className={classes.formButton}
+                item
               >
-                {CmdConfig.stopButton}
-              </Button>
+                <Button
+                  disableElevation={true}
+                  disabled={isRunning}
+                  type='submit'
+                  color="primary"
+                  size='medium'
+                  variant="contained"
+                >
+                  {CmdConfig.cmdButton}
+                </Button>
+              </Grid>
+
+              <Grid
+                className={classes.formButton}
+                item
+              >
+                <Button
+                  disableElevation={true}
+                  disabled={!foreverChecked || !isRunning}
+                  onClick={handleStop}
+                  color="primary"
+                  size='medium'
+                  variant="contained"
+                  style={{
+                    marginLeft: theme.spacing(1),
+                    marginRight: theme.spacing(1),
+                  }}
+                >
+                  {CmdConfig.stopButton}
+                </Button>
+              </Grid>
+
+              <Grid
+                className={classes.formButton}
+                item
+              >
+                <Button
+                  disableElevation={true}
+                  onClick={handleClear}
+                  color="primary"
+                  size='medium'
+                  variant="contained"
+                >
+                  {CmdConfig.clearButton}
+                </Button>
+              </Grid>
             </Grid>
 
           </Grid>
