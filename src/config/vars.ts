@@ -80,7 +80,7 @@ class Cmd {
   static readonly heading = 'Console'
 
   static readonly cmd = 'Command'
-  static readonly cmdButton = 'Run Command'
+  static readonly cmdButton = 'Run'
   static readonly iterate = 'Iterate?'
   static readonly forever = 'Forever?'
   static readonly interval = 'Interval (ms)'

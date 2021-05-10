@@ -47,12 +47,24 @@ export const Main = () => {
             />
             <Grid item container className={classes.header} xs={12}>
 
+              <Typography variant="h1">
+                {Home.heading}
+              </Typography>
+
+            </Grid>
+
+            <Grid className={classes.content} item container xs={12}>
+              <Content/>
+            </Grid>
+
+            <Grid className={classes.footer} item container xs={12}>
+
               <Grid
                 item
                 container
                 alignItems="center"
                 justify="flex-start"
-                xs={4}
+                xs={10}
               >
 
                 <Typography variant="caption">
@@ -60,48 +72,6 @@ export const Main = () => {
                   {App.copyright}
                 </Typography>
 
-              </Grid>
-
-              <Grid
-                item
-                container
-                alignItems="center"
-                justify="center"
-                xs={4}
-              >
-
-                <Typography variant="h1">
-                  {Home.heading}
-                </Typography>
-
-              </Grid>
-
-              <Grid
-                item
-                container
-                alignItems="center"
-                justify="flex-end"
-                xs={4}
-              >
-
-                <Typography variant="caption">
-            &nbsp;
-                </Typography>
-
-              </Grid>
-
-            </Grid>
-
-            <Grid item container xs={12}>
-              <Content/>
-            </Grid>
-
-            <Grid className={classes.footer} item container xs={12}>
-
-              <Grid item container xs={10}>
-                <Typography variant="h1">
-                    &nbsp;
-                </Typography>
               </Grid>
 
               <Grid

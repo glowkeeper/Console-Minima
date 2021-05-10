@@ -153,11 +153,18 @@ const display = (props: Props) => {
   };
 
   return (
-    <Grid className={classes.loggedInContent} item container xs={12}>
+
+    <Grid item container alignItems='flex-start' xs={12}>
 
       <Grid item container xs={12}>
 
-        <Grid item container justify="flex-start" xs={12}>
+        <Grid
+          item
+          container
+          alignItems='flex-start'
+          justify="flex-start"
+          xs={12}
+        >
 
           <Typography variant="h2">
             {CmdConfig.heading}
@@ -429,8 +436,8 @@ const display = (props: Props) => {
             }
           </pre>
         </div>
-
       </Grid>
+
     </Grid>
   );
 };
