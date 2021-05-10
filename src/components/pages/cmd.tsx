@@ -191,11 +191,12 @@ const display = (props: Props) => {
               className={classes.formLabel}
               justify="flex-start"
               alignItems="center"
-              xs={2}
+              xs={4}
+              lg={2}
             >
               <label htmlFor="cmd">{CmdConfig.cmd}</label>
             </Grid>
-            <Grid item container xs={10}>
+            <Grid item container xs={8} lg={10}>
               <TextField
                 fullWidth
                 size="small"
@@ -210,21 +211,21 @@ const display = (props: Props) => {
               />
             </Grid>
             {formik.errors.cmd && formik.touched.cmd ? (
-              <Grid
-                item
-                container
-                className={classes.formError}
-                xs={12}
-              >
-                <Grid item container xs={2}>
-                  <Typography variant="h2">
+              <>
+                <Grid item container xs={4} lg={2}>
+                  <Typography variant="body1">
                     &nbsp;
                   </Typography>
                 </Grid>
-                <Grid item container xs={10}>
+                <Grid
+                  className={classes.formError}
+                  item container
+                  xs={8}
+                  lg={10}
+                >
                   {formik.errors.cmd}
                 </Grid>
-              </Grid>
+              </>
               ) : null
             }
           </Grid>
@@ -235,11 +236,12 @@ const display = (props: Props) => {
               className={classes.formLabel}
               justify="flex-start"
               alignItems="center"
-              xs={2}
+              xs={4}
+              lg={2}
             >
               <label htmlFor="iterate">{CmdConfig.iterate}</label>
             </Grid>
-            <Grid item container xs={10}>
+            <Grid item container xs={8} lg={10}>
               <Switch
                 size='medium'
                 color="primary"
@@ -263,11 +265,12 @@ const display = (props: Props) => {
               className={classes.formLabel}
               justify="flex-start"
               alignItems="center"
-              xs={2}
+              xs={4}
+              lg={2}
             >
               <label htmlFor="interval">{CmdConfig.interval}</label>
             </Grid>
-            <Grid item container xs={10}>
+            <Grid item container xs={8} lg={10}>
               <Input
                 fullWidth
                 disableUnderline={true}
@@ -282,21 +285,21 @@ const display = (props: Props) => {
               />
             </Grid>
             {formik.errors.interval && formik.touched.interval ? (
-              <Grid
-                item
-                container
-                className={classes.formError}
-                xs={12}
-              >
-                <Grid item container xs={2}>
-                  <Typography variant="h2">
-                    &nbsp;
+              <>
+                <Grid item container xs={4} lg={2}>
+                  <Typography variant="body1">
+                  &nbsp;
                   </Typography>
                 </Grid>
-                <Grid item container xs={10}>
+                <Grid
+                  className={classes.formError}
+                  item container
+                  xs={8}
+                  lg={10}
+                >
                   {formik.errors.interval}
                 </Grid>
-              </Grid>
+              </>
               ) : null
             }
           </Grid>
@@ -308,11 +311,12 @@ const display = (props: Props) => {
               className={classes.formLabel}
               justify="flex-start"
               alignItems="center"
-              xs={2}
+              xs={4}
+              lg={2}
             >
               <label htmlFor="forever">{CmdConfig.forever}</label>
             </Grid>
-            <Grid item container xs={10}>
+            <Grid item container xs={8} lg={10}>
               <Switch
                 disabled={!iterateChecked}
                 size='medium'
@@ -337,11 +341,12 @@ const display = (props: Props) => {
               className={classes.formLabel}
               justify="flex-start"
               alignItems="center"
-              xs={2}
+              xs={4}
+              lg={2}
             >
               <label htmlFor="iterations">{CmdConfig.iterations}</label>
             </Grid>
-            <Grid item container xs={10}>
+            <Grid item container xs={8} lg={10}>
               <Input
                 fullWidth
                 disableUnderline={true}
@@ -359,28 +364,28 @@ const display = (props: Props) => {
               />
             </Grid>
             {formik.errors.iterations && formik.touched.iterations ? (
-              <Grid
-                item
-                container
-                className={classes.formError}
-                xs={12}
-              >
-                <Grid item container xs={2}>
-                  <Typography variant="h2">
+                <>
+                  <Grid item container xs={4} lg={2}>
+                    <Typography variant="body1">
                     &nbsp;
-                  </Typography>
-                </Grid>
-                <Grid item container xs={10}>
-                  {formik.errors.iterations}
-                </Grid>
-              </Grid>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    className={classes.formError}
+                    item container
+                    xs={8}
+                    lg={10}
+                  >
+                    {formik.errors.iterations}
+                  </Grid>
+                </>
               ) : null
             }
           </Grid>
 
           <Grid item container xs={12}>
 
-            <Grid item container xs={2}>
+            <Grid item container xs={4} lg={2}>
               <Typography variant="h2">
                 &nbsp;
               </Typography>

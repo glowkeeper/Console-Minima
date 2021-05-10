@@ -37,21 +37,21 @@ let theme = createMuiTheme({
     fontWeightMedium: 500,
     fontWeightBold: 700,
     h1: {
-      lineHeight: '1.2',
-      fontSize: '2.25em',
+      lineHeight: '1',
+      fontSize: '2em',
       fontWeight: 700,
       fontFamily: '"Manrope", "Roboto", "Arial", "sans-serif"',
       color: '#91919D',
     },
     h2: {
       lineHeight: '1.5',
-      fontSize: '2.2em',
+      fontSize: '1.9em',
       fontWeight: 400,
       fontFamily: '"Manrope", "Roboto", "Arial", "sans-serif"',
       color: '#91919D',
     },
     h3: {
-      lineHeight: '1.2',
+      lineHeight: '1.5',
       fontSize: '1.75em',
       fontWeight: 700,
       fontFamily: '"Manrope", "Roboto", "Arial", "sans-serif"',
@@ -158,7 +158,7 @@ const themeStyles = makeStyles({
       borderRadius: '10px',
       background: 'linear-gradient(#FFFFFF, #FFFFFF)',
       color: '#001C32',
-      padding: theme.spacing(1.5),
+      padding: theme.spacing(1),
     },
     '& .MuiInputBase-input:focus': {
       border: '2px solid #317AFF',
@@ -264,16 +264,18 @@ const themeStyles = makeStyles({
     width: '100%',
   },
   formLabel: {
-    paddingLeft: theme.spacing(2),
     paddingBottom: theme.spacing(1),
     paddingTop: theme.spacing(1),
     color: '#AAAABE',
   },
   formError: {
     color: 'red',
+    margin: 0,
+    padding: 0,
   },
   formButton: {
-    paddingTop: theme.spacing(5),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   formSummary: {
     paddingTop: theme.spacing(2),
