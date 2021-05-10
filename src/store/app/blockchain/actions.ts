@@ -85,6 +85,12 @@ try {
 }
 */
 
+export const clear = () => {
+  return async (dispatch: AppDispatch) => {
+    dispatch(write({data: []})(CmdActionTypes.CMD_SUCCESS));
+  };
+};
+
 export const command = (cmd: string) => {
   return async (dispatch: AppDispatch) => {
     dispatch(write({data: [{stop: false}]})(CmdActionTypes.CMD_STOP));

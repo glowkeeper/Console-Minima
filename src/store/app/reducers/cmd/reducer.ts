@@ -10,6 +10,8 @@ export const reducer =
   if ( action.type == CmdActionTypes.CMD_SUCCESS ) {
     const myCmdData: CmdProps = action.payload as CmdProps;
     return {...state, data: myCmdData.data};
+  } else if ( action.type == CmdActionTypes.CMD_FAILURE ) {
+    return {...state, data: []};
   } else {
     return state;
   }

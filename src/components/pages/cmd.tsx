@@ -21,6 +21,7 @@ import {
 } from '../../store/types';
 
 import {
+  clear,
   command,
   commandIterate,
   setStop,
@@ -60,6 +61,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
+  clear: () => void
   command: (cmd: string) => void
   commandIterate: (cmd: CmdArgs) => void
   setStop:(stop: boolean) => void
@@ -152,7 +154,7 @@ const display = (props: Props) => {
   };
 
   const handleClear = () => {
-    props.command('');
+    props.clear();
   };
 
   return (
@@ -493,6 +495,7 @@ const mapStateToProps = (state: ApplicationState): StateProps => {
 
 const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => {
   return {
+    clear: () => dispatch(clear()),
     command: (cmd: string) => dispatch(command(cmd)),
     commandIterate: (cmd: CmdArgs) => dispatch(commandIterate(cmd)),
     setStop: (stop: boolean) => dispatch(setStop(stop)),
