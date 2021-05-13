@@ -18,27 +18,6 @@ import {
 
 import {write} from '../../actions';
 
-const sleep = (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-const doPost = (url: string, cmd: string): Promise<object> => {
-  return new Promise((resolve, reject) => {
-    Minima.net.POST(Remote.cmdURL, cmd, function(msg: any) {
-      if ( msg.hasOwnProperty('result')) {
-        const cmdObject = JSON.parse(msg.result);
-        if ( cmdObject.status ) {
-          resolve(cmdObject.response);
-        } else {
-          resolve({});
-        }
-      } else {
-        resolve({});
-      }
-    });
-  });
-};
-
 export const init = () => {
   return async (dispatch: AppDispatch) => {
     const txInit: TxData = {
@@ -91,21 +70,26 @@ export const clear = () => {
   };
 };
 
+const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+const commandAsync = (cmd: string): Promise<object> => {
+  return new Promise((resolve, reject) => {
+    // console.log('Got command', cmd);
+    Minima.cmd(cmd, function(msg: any) {
+      resolve(msg.response);
+    });
+  });
+};
+
 export const command = (cmd: string) => {
   return async (dispatch: AppDispatch) => {
+    // console.log('Got command', cmd);
     dispatch(write({data: [{stop: false}]})(CmdActionTypes.CMD_STOP));
-    Minima.net.POST(Remote.cmdURL, cmd, function(msg: any) {
+    Minima.cmd(cmd, function(msg: any) {
       dispatch(write({data: [{stop: true}]})(CmdActionTypes.CMD_STOP));
-      if ( msg.hasOwnProperty('result')) {
-        const cmdObject = JSON.parse(msg.result);
-        if ( cmdObject.status ) {
-          dispatch(
-              write({data: cmdObject.response})(CmdActionTypes.CMD_SUCCESS),
-          );
-        } else {
-          dispatch(write({data: []})(CmdActionTypes.CMD_FAILURE));
-        }
-      }
+      dispatch(write({data: msg.response})(CmdActionTypes.CMD_SUCCESS));
     });
   };
 };
@@ -117,7 +101,7 @@ export const commandIterate = (cmd: CmdArgs) => {
       let state = getState();
       let stop = false;
       while (!stop) {
-        const thisPost = await doPost(Remote.cmdURL, cmd.cmd);
+        const thisPost = await commandAsync(cmd.cmd);
         dispatch(write({data: thisPost})(CmdActionTypes.CMD_SUCCESS));
         await sleep(cmd.interval);
         state = getState();
@@ -125,7 +109,7 @@ export const commandIterate = (cmd: CmdArgs) => {
       }
     } else {
       for ( let i = 0; i < cmd.iterations; i++ ) {
-        const thisPost = await doPost(Remote.cmdURL, cmd.cmd);
+        const thisPost = await commandAsync(cmd.cmd);
         dispatch(write({data: thisPost})(CmdActionTypes.CMD_SUCCESS));
         await sleep(cmd.interval);
       }
