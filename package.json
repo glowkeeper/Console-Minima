@@ -1,11 +1,11 @@
 {
   "name": "console",
-  "version": "0.1.0",
+  "version": "1.1.1",
   "description": "Enterprise Minima",
-  "main": "service.js",
+  "main": "index.html",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/minima-global/Console-Minima"
+    "url": "git+https://github.com/glowkeeper/Console-Minima"
   },
   "scripts": {
     "compile": "./node_modules/.bin/webpack --config ./webpack.dev.js --mode development && rm ./build/app.js && rm ./build/app.js.map && mkdir ./build/images && cp ./miniDapp/images/* ./build/images && cp ./miniDapp/config/minidapp.conf ./build  && cd ./build && zip -r ../miniDapp/dist/powerConsole.minidapp *",
@@ -106,7 +106,7 @@
     "webpack-merge": "^5.7.3"
   },
   "bugs": {
-    "url": "https://github.com/minima-global/Console-Minima/issues"
+    "url": "https://github.com/glowkeeper/Console-Minima/issues"
   },
-  "homepage": "https://github.com/minima-global/Console-Minima#readme"
+  "homepage": "https://github.com/glowkeeper/Console-Minima#readme"
 }
