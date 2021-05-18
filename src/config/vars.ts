@@ -11,7 +11,7 @@ class App {
   static readonly enquiries = `${App.author}`
   static readonly email = 'steve.huckle@gmail.com'
   static readonly bugEmail = 'minima-global@fire.fundersclub.com'
-  static readonly version = '0.2.0'
+  static readonly version = '1.1.2'
   static readonly release = 'Testnet'
 }
 
